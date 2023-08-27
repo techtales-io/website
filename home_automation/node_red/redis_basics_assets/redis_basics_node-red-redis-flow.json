@@ -1,0 +1,433 @@
+[
+  {
+    "id": "2a4a6f3dd66c8138",
+    "type": "tab",
+    "label": "Flow 1",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "4238f7ab94a4bbf7",
+    "type": "redis-command",
+    "z": "2a4a6f3dd66c8138",
+    "server": "0c578a88da478bc8",
+    "command": "SETNX",
+    "name": "",
+    "topic": "",
+    "params": "[]",
+    "paramsType": "json",
+    "payloadType": "json",
+    "block": false,
+    "x": 1010,
+    "y": 320,
+    "wires": [[]]
+  },
+  {
+    "id": "9e9d6270d4f2b5d0",
+    "type": "server-state-changed",
+    "z": "2a4a6f3dd66c8138",
+    "name": "",
+    "server": "a44950aa.f79bc",
+    "version": 4,
+    "exposeToHomeAssistant": false,
+    "haConfig": [
+      {
+        "property": "name",
+        "value": ""
+      },
+      {
+        "property": "icon",
+        "value": ""
+      }
+    ],
+    "entityidfilter": "binary_sensor.sonoff_contact_window_office_contact",
+    "entityidfiltertype": "exact",
+    "outputinitially": true,
+    "state_type": "str",
+    "haltifstate": "",
+    "halt_if_type": "str",
+    "halt_if_compare": "is",
+    "outputs": 1,
+    "output_only_on_state_change": true,
+    "for": "0",
+    "forType": "num",
+    "forUnits": "minutes",
+    "ignorePrevStateNull": false,
+    "ignorePrevStateUnknown": false,
+    "ignorePrevStateUnavailable": false,
+    "ignoreCurrentStateUnknown": false,
+    "ignoreCurrentStateUnavailable": false,
+    "outputProperties": [
+      {
+        "property": "payload",
+        "propertyType": "msg",
+        "value": "",
+        "valueType": "entityState"
+      },
+      {
+        "property": "data",
+        "propertyType": "msg",
+        "value": "",
+        "valueType": "eventData"
+      },
+      {
+        "property": "topic",
+        "propertyType": "msg",
+        "value": "",
+        "valueType": "triggerId"
+      }
+    ],
+    "x": 280,
+    "y": 340,
+    "wires": [["4c1f3c23ce6db6ff"]]
+  },
+  {
+    "id": "4c1f3c23ce6db6ff",
+    "type": "switch",
+    "z": "2a4a6f3dd66c8138",
+    "name": "",
+    "property": "payload",
+    "propertyType": "msg",
+    "rules": [
+      {
+        "t": "eq",
+        "v": "on",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "off",
+        "vt": "str"
+      }
+    ],
+    "checkall": "true",
+    "repair": false,
+    "outputs": 2,
+    "x": 590,
+    "y": 340,
+    "wires": [["26841266b3c3f051"], ["5e154dad6e177c69"]]
+  },
+  {
+    "id": "26841266b3c3f051",
+    "type": "function",
+    "z": "2a4a6f3dd66c8138",
+    "name": "set value",
+    "func": "msg.payload = {\n    timestamp: Date.now(),\n    discord: false,\n}\nreturn msg",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 740,
+    "y": 320,
+    "wires": [["c9437580f6d53669"]]
+  },
+  {
+    "id": "c9437580f6d53669",
+    "type": "json",
+    "z": "2a4a6f3dd66c8138",
+    "name": "",
+    "property": "payload",
+    "action": "str",
+    "pretty": false,
+    "x": 870,
+    "y": 320,
+    "wires": [["4238f7ab94a4bbf7"]]
+  },
+  {
+    "id": "5e154dad6e177c69",
+    "type": "redis-command",
+    "z": "2a4a6f3dd66c8138",
+    "server": "0c578a88da478bc8",
+    "command": "DEL",
+    "name": "",
+    "topic": "",
+    "params": "[]",
+    "paramsType": "json",
+    "payloadType": "json",
+    "block": false,
+    "x": 740,
+    "y": 360,
+    "wires": [[]]
+  },
+  {
+    "id": "f9d83fea3eea0d33",
+    "type": "inject",
+    "z": "2a4a6f3dd66c8138",
+    "name": "1 min",
+    "props": [
+      {
+        "p": "timestamp",
+        "v": "",
+        "vt": "date"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "60",
+    "crontab": "",
+    "once": true,
+    "onceDelay": "15",
+    "topic": "binary_sensor.sonoff_contact_window_office_contact",
+    "x": 110,
+    "y": 540,
+    "wires": [["2bdba4d6561a9fb6"]]
+  },
+  {
+    "id": "2bdba4d6561a9fb6",
+    "type": "redis-command",
+    "z": "2a4a6f3dd66c8138",
+    "server": "0c578a88da478bc8",
+    "command": "GET",
+    "name": "",
+    "topic": "",
+    "params": "[]",
+    "paramsType": "json",
+    "payloadType": "json",
+    "block": false,
+    "x": 240,
+    "y": 540,
+    "wires": [["6c6efc9ef1b9cd8e"]]
+  },
+  {
+    "id": "6c6efc9ef1b9cd8e",
+    "type": "switch",
+    "z": "2a4a6f3dd66c8138",
+    "name": "if not null",
+    "property": "payload",
+    "propertyType": "msg",
+    "rules": [
+      {
+        "t": "nnull"
+      }
+    ],
+    "checkall": "true",
+    "repair": false,
+    "outputs": 1,
+    "x": 380,
+    "y": 540,
+    "wires": [["470a33a11d3a2a18"]]
+  },
+  {
+    "id": "470a33a11d3a2a18",
+    "type": "json",
+    "z": "2a4a6f3dd66c8138",
+    "name": "",
+    "property": "payload",
+    "action": "",
+    "pretty": false,
+    "x": 510,
+    "y": 540,
+    "wires": [["90df1f72dc5a4384"]]
+  },
+  {
+    "id": "9fc69791a03d8f38",
+    "type": "function",
+    "z": "2a4a6f3dd66c8138",
+    "name": "add durration",
+    "func": "msg.payload.durration = msg.timestamp - msg.payload.timestamp\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 830,
+    "y": 540,
+    "wires": [["59a7533ffb97147a"]]
+  },
+  {
+    "id": "59a7533ffb97147a",
+    "type": "switch",
+    "z": "2a4a6f3dd66c8138",
+    "name": "durration > 15m",
+    "property": "payload.durration",
+    "propertyType": "msg",
+    "rules": [
+      {
+        "t": "gt",
+        "v": "900000",
+        "vt": "num"
+      }
+    ],
+    "checkall": "true",
+    "repair": false,
+    "outputs": 1,
+    "x": 1000,
+    "y": 540,
+    "wires": [["0ed6ae5939c3c4a4", "3dddb68a9a72a5dc"]]
+  },
+  {
+    "id": "18172c5d173178db",
+    "type": "http request",
+    "z": "2a4a6f3dd66c8138",
+    "name": "discord webhook",
+    "method": "POST",
+    "ret": "txt",
+    "paytoqs": "ignore",
+    "url": "https://discord.com/api/webhooks/1234567890123456789/abcdefghijklmno-pqrstuvwxyzABCDEFGHIJKLMNOP-QRSTUVWXYZ1_234567890abc",
+
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "headers": [
+      {
+        "keyType": "other",
+        "keyValue": "Content-Type",
+        "valueType": "other",
+        "valueValue": "application/json"
+      },
+      {
+        "keyType": "other",
+        "keyValue": "Expect",
+        "valueType": "other",
+        "valueValue": "application/json"
+      }
+    ],
+    "x": 1330,
+    "y": 500,
+    "wires": [[]]
+  },
+  {
+    "id": "0ed6ae5939c3c4a4",
+    "type": "template",
+    "z": "2a4a6f3dd66c8138",
+    "name": "",
+    "field": "payload",
+    "fieldType": "msg",
+    "format": "handlebars",
+    "syntax": "mustache",
+    "template": "{\n    \"content\": \"{{topic}} is open > 15min\"\n}",
+    "output": "json",
+    "x": 1160,
+    "y": 500,
+    "wires": [["18172c5d173178db"]]
+  },
+  {
+    "id": "315f66a6ebf269de",
+    "type": "redis-instance",
+    "z": "2a4a6f3dd66c8138",
+    "server": "0c578a88da478bc8",
+    "name": "",
+    "topic": "redis",
+    "location": "flow",
+    "x": 110,
+    "y": 100,
+    "wires": []
+  },
+  {
+    "id": "9fd6ab0fff9aeee4",
+    "type": "comment",
+    "z": "2a4a6f3dd66c8138",
+    "name": "store state of sensor in redis",
+    "info": "",
+    "x": 160,
+    "y": 280,
+    "wires": []
+  },
+  {
+    "id": "90df1f72dc5a4384",
+    "type": "switch",
+    "z": "2a4a6f3dd66c8138",
+    "name": "discord is false",
+    "property": "payload.discord",
+    "propertyType": "msg",
+    "rules": [
+      {
+        "t": "false"
+      }
+    ],
+    "checkall": "true",
+    "repair": false,
+    "outputs": 1,
+    "x": 660,
+    "y": 540,
+    "wires": [["9fc69791a03d8f38"]]
+  },
+  {
+    "id": "ad37f284d9c946e9",
+    "type": "redis-command",
+    "z": "2a4a6f3dd66c8138",
+    "server": "0c578a88da478bc8",
+    "command": "SET",
+    "name": "",
+    "topic": "",
+    "params": "[]",
+    "paramsType": "json",
+    "payloadType": "json",
+    "block": false,
+    "x": 1520,
+    "y": 580,
+    "wires": [[]]
+  },
+  {
+    "id": "7f3e619bdb9e534f",
+    "type": "json",
+    "z": "2a4a6f3dd66c8138",
+    "name": "",
+    "property": "payload",
+    "action": "str",
+    "pretty": false,
+    "x": 1390,
+    "y": 580,
+    "wires": [["ad37f284d9c946e9"]]
+  },
+  {
+    "id": "3dddb68a9a72a5dc",
+    "type": "change",
+    "z": "2a4a6f3dd66c8138",
+    "name": "",
+    "rules": [
+      {
+        "t": "set",
+        "p": "payload.discord",
+        "pt": "msg",
+        "to": "true",
+        "tot": "bool"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "from": "",
+    "to": "",
+    "reg": false,
+    "x": 1210,
+    "y": 580,
+    "wires": [["7f3e619bdb9e534f"]]
+  },
+  {
+    "id": "0c578a88da478bc8",
+    "type": "redis-config",
+    "name": "redis.database.svc.cluster.local",
+    "options": "{\"sentinels\":[{\"host\":\"redis.database.svc.cluster.local\",\"port\":26379}],\"name\":\"redis-master\"}",
+    "cluster": false,
+    "optionsType": "json"
+  },
+  {
+    "id": "a44950aa.f79bc",
+    "type": "server",
+    "name": "Home Assistant",
+    "version": 4,
+    "addon": false,
+    "rejectUnauthorizedCerts": false,
+    "ha_boolean": "y|yes|true|on|home|open",
+    "connectionDelay": true,
+    "cacheJson": true,
+    "heartbeat": true,
+    "heartbeatInterval": "30",
+    "areaSelector": "friendlyName",
+    "deviceSelector": "friendlyName",
+    "entitySelector": "friendlyName",
+    "statusSeparator": "at: ",
+    "statusYear": "hidden",
+    "statusMonth": "short",
+    "statusDay": "numeric",
+    "statusHourCycle": "h23",
+    "statusTimeFormat": "h:m"
+  }
+]
