@@ -1,0 +1,38 @@
+---
+name: MkDocs build
+
+on:
+  repository_dispatch:
+    types:
+      - build-blog
+
+jobs:
+  build:
+    name: mkdocs build
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.com/marketplace/actions/action-github-app-token
+      - name: generate GitHub API token
+        id: app-token
+        uses: tibdex/github-app-token@v1.7.0
+        with:
+          app_id: ${{ secrets.TECHTALES_BOT_GITHUB_APP_ID }}
+          private_key: ${{ secrets.TECHTALES_BOT_GITHUB_PEM }}
+      # https://github.com/marketplace/actions/checkout
+      - name: checkout
+        uses: actions/checkout@v3.6.0
+        with:
+          repository: techtales-io/mkdocs-blog
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
+      - name: setup git
+        run: |
+          git config --global user.name "techtales-bot[bot]"
+          git config --global user.email "118013669+techtales-bot[bot]@users.noreply.github.com"
+      # https://github.com/marketplace/actions/deploy-mkdocs
+      - name: deploy docs
+        uses: mhausenblas/mkdocs-deploy-gh-pages@1.26
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          EXTRA_PACKAGES: build-base
+          REQUIREMENTS: requirements.txt
